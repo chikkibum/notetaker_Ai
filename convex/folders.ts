@@ -1,7 +1,7 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { auth } from "./auth";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import type { Doc, Id } from "./_generated/dataModel";
 
 // Create a new folder
 export const create = mutation({
@@ -84,13 +84,16 @@ export const update = mutation({
         }
 
         // Check for circular reference (prevent moving folder into its own descendant)
-        let currentParentId: string | null = args.parentId;
+        let currentParentId: Id<"folders"> | null = args.parentId;
         while (currentParentId) {
           if (currentParentId === args.folderId) {
             throw new Error("Cannot move folder into its own descendant");
           }
-          const currentParent = await ctx.db.get(currentParentId);
-          currentParentId = currentParent?.parentId ?? null;
+          const currentParent = await ctx.db.get(currentParentId) as Doc<"folders"> | null;
+          if (!currentParent) {
+            break;
+          }
+          currentParentId = currentParent.parentId;
         }
       }
     }
@@ -200,13 +203,16 @@ export const moveToParent = mutation({
       }
 
       // Check for circular reference (prevent moving folder into its own descendant)
-      let currentParentId: string | null = args.parentId;
+      let currentParentId: Id<"folders"> | null = args.parentId;
       while (currentParentId) {
         if (currentParentId === args.folderId) {
           throw new Error("Cannot move folder into its own descendant");
         }
-        const currentParent = await ctx.db.get(currentParentId);
-        currentParentId = currentParent?.parentId ?? null;
+        const currentParent = await ctx.db.get(currentParentId) as Doc<"folders"> | null;
+        if (!currentParent) {
+          break;
+        }
+        currentParentId = currentParent.parentId;
       }
     }
 
