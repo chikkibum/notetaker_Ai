@@ -10,8 +10,6 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
-import type * as schemas_authSchema from "../schemas/authSchema.js";
-import type * as tasks from "../tasks.js";
 
 import type {
   ApiFromModules,
@@ -22,8 +20,6 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
-  "schemas/authSchema": typeof schemas_authSchema;
-  tasks: typeof tasks;
 }>;
 
 /**

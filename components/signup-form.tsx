@@ -1,24 +1,76 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { useAuthActions } from "@convex-dev/auth/react";
+
+const signupSchema = z
+  .object({
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Please enter a valid email address"),
+    flow:z.literal("signUp"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      ),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type SignupFormData = z.infer<typeof signupSchema>;
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      flow: "signUp",
+    },
+  });
+  const { signIn } = useAuthActions();
+
+  const onSubmit = async (data: SignupFormData) => {
+    // Handle form submission here
+    console.log("Form data:", data);
+    const { signingIn, redirect } = await signIn("password", data);
+
+    console.log(signingIn, redirect, "Response");
+    // You can add your signup logic here
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8">
+            <input type="hidden" {...register("flow")} />
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Create your account</h1>
@@ -27,12 +79,21 @@ export function SignupForm({
                 </p>
               </div>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel
+                  htmlFor="email"
+                  className={cn(errors.email && "text-destructive")}
+                >
+                  Email
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
+                  aria-invalid={errors.email ? "true" : "false"}
+                  {...register("email")}
+                />
+                <FieldError
+                  errors={errors.email ? [errors.email] : undefined}
                 />
                 <FieldDescription>
                   We&apos;ll use this to contact you. We will not share your
@@ -42,22 +103,55 @@ export function SignupForm({
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" type="password" required />
+                    <FieldLabel
+                      htmlFor="password"
+                      className={cn(errors.password && "text-destructive")}
+                    >
+                      Password
+                    </FieldLabel>
+                    <Input
+                      id="password"
+                      type="password"
+                      aria-invalid={errors.password ? "true" : "false"}
+                      {...register("password")}
+                    />
+                    <FieldError
+                      errors={errors.password ? [errors.password] : undefined}
+                    />
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="confirm-password">
+                    <FieldLabel
+                      htmlFor="confirm-password"
+                      className={cn(
+                        errors.confirmPassword && "text-destructive"
+                      )}
+                    >
                       Confirm Password
                     </FieldLabel>
-                    <Input id="confirm-password" type="password" required />
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      aria-invalid={errors.confirmPassword ? "true" : "false"}
+                      {...register("confirmPassword")}
+                    />
+                    <FieldError
+                      errors={
+                        errors.confirmPassword
+                          ? [errors.confirmPassword]
+                          : undefined
+                      }
+                    />
                   </Field>
                 </Field>
                 <FieldDescription>
-                  Must be at least 8 characters long.
+                  Must be at least 8 characters long with uppercase, lowercase,
+                  and a number.
                 </FieldDescription>
               </Field>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating Account..." : "Create Account"}
+                </Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
@@ -110,5 +204,5 @@ export function SignupForm({
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }
