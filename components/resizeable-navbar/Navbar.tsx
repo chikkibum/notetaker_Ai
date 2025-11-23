@@ -11,7 +11,10 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizeable-nav";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { ThemeSwitcher } from "../theme-switcher";
+import { useConvexAuth } from "convex/react";
 
 export function Header() {
   const navItems = [
@@ -30,9 +33,26 @@ export function Header() {
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const router = useRouter();
+
+  const handleLoginClick = () => {
+    setIsMobileMenuOpen(false);
+    router.push("/login");
+  };
+
+  const handleSignupClick = () => {
+    setIsMobileMenuOpen(false);
+    router.push("/signin");
+  };
+
+  const handleDashboardClick = () => {
+    setIsMobileMenuOpen(false);
+    router.push("/notes");
+  };
 
   return (
-    <div className="sticky backdrop-blur-md top-0 w-full">
+    <div className="sticky backdrop-blur-md top-2 w-full">
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
@@ -40,8 +60,37 @@ export function Header() {
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
-            <NavbarButton variant="secondary">Login</NavbarButton>
-            <NavbarButton variant="primary">Book a call</NavbarButton>
+            {isLoading ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="hidden sm:inline">Loading...</span>
+              </div>
+            ) : isAuthenticated ? (
+              <>
+                <NavbarButton
+                  variant="secondary"
+                  onClick={handleDashboardClick}
+                >
+                  Dashboard
+                </NavbarButton>
+                <NavbarButton variant="primary">Book a call</NavbarButton>
+              </>
+            ) : (
+              <>
+                <NavbarButton
+                  variant="secondary"
+                  onClick={handleLoginClick}
+                >
+                  Login
+                </NavbarButton>
+                <NavbarButton
+                  variant="primary"
+                  onClick={handleSignupClick}
+                >
+                  Sign up
+                </NavbarButton>
+              </>
+            )}
           </div>
         </NavBody>
 
@@ -75,21 +124,46 @@ export function Header() {
               </a>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Login
-              </NavbarButton>
-
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Book a call
-              </NavbarButton>
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Loading...</span>
+                </div>
+              ) : isAuthenticated ? (
+                <>
+                  <NavbarButton
+                    onClick={handleDashboardClick}
+                    variant="primary"
+                    className="w-full"
+                  >
+                    Dashboard
+                  </NavbarButton>
+                  <NavbarButton
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    Book a call
+                  </NavbarButton>
+                </>
+              ) : (
+                <>
+                  <NavbarButton
+                    onClick={handleLoginClick}
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    Login
+                  </NavbarButton>
+                  <NavbarButton
+                    onClick={handleSignupClick}
+                    variant="primary"
+                    className="w-full"
+                  >
+                    Sign up
+                  </NavbarButton>
+                </>
+              )}
             </div>
           </MobileNavMenu>
         </MobileNav>

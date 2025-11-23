@@ -1,0 +1,261 @@
+import { mutation, query } from "./_generated/server";
+import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
+
+// Create a new note
+export const create = mutation({
+  args: {
+    title: v.string(),
+    content: v.any(), // TipTap/ProseMirror JSON content
+    folderId: v.union(v.id("folders"), v.null()),
+    tags: v.optional(v.array(v.string())),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const now = Date.now();
+    const noteId = await ctx.db.insert("notes", {
+      userId,
+      title: args.title,
+      content: args.content,
+      folderId: args.folderId,
+      tags: args.tags || [],
+      isArchived: false,
+      isDeleted: false,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return noteId;
+  },
+});
+
+// Update an existing note
+export const update = mutation({
+  args: {
+    noteId: v.id("notes"),
+    title: v.optional(v.string()),
+    content: v.optional(v.any()), // TipTap/ProseMirror JSON content
+    folderId: v.optional(v.union(v.id("folders"), v.null())),
+    tags: v.optional(v.array(v.string())),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+    if (note.userId !== userId) {
+      throw new Error("Not authorized to update this note");
+    }
+
+    const updates: any = {
+      updatedAt: Date.now(),
+    };
+
+    if (args.title !== undefined) {
+      updates.title = args.title;
+    }
+    if (args.content !== undefined) {
+      updates.content = args.content;
+    }
+    if (args.folderId !== undefined) {
+      updates.folderId = args.folderId;
+    }
+    if (args.tags !== undefined) {
+      updates.tags = args.tags;
+    }
+
+    await ctx.db.patch(args.noteId, updates);
+    return await ctx.db.get(args.noteId);
+  },
+});
+
+// Soft delete a note (sets isDeleted to true)
+export const softDelete = mutation({
+  args: {
+    noteId: v.id("notes"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+    if (note.userId !== userId) {
+      throw new Error("Not authorized to delete this note");
+    }
+
+    await ctx.db.patch(args.noteId, {
+      isDeleted: true,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Permanently delete a note
+export const deletePermanently = mutation({
+  args: {
+    noteId: v.id("notes"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+    if (note.userId !== userId) {
+      throw new Error("Not authorized to delete this note");
+    }
+
+    await ctx.db.delete(args.noteId);
+  },
+});
+
+// Archive a noteauth.getAuthUserId
+export const archive = mutation({
+  args: {
+    noteId: v.id("notes"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+    if (note.userId !== userId) {
+      throw new Error("Not authorized to archive this note");
+    }
+
+    await ctx.db.patch(args.noteId, {
+      isArchived: true,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Unarchive a note
+export const unarchive = mutation({
+  args: {
+    noteId: v.id("notes"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+    if (note.userId !== userId) {
+      throw new Error("Not authorized to unarchive this note");
+    }
+
+    await ctx.db.patch(args.noteId, {
+      isArchived: false,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Restore a soft-deleted note
+export const restore = mutation({
+  args: {
+    noteId: v.id("notes"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+    if (note.userId !== userId) {
+      throw new Error("Not authorized to restore this note");
+    }
+
+    await ctx.db.patch(args.noteId, {
+      isDeleted: false,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Move a note to a different folder
+export const moveToFolder = mutation({
+  args: {
+    noteId: v.id("notes"),
+    folderId: v.union(v.id("folders"), v.null()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+    if (note.userId !== userId) {
+      throw new Error("Not authorized to move this note");
+    }
+
+    // If moving to a folder, verify the folder belongs to the user
+    if (args.folderId) {
+      const folder = await ctx.db.get(args.folderId);
+      if (!folder) {
+        throw new Error("Folder not found");
+      }
+      if (folder.userId !== userId) {
+        throw new Error("Not authorized to move note to this folder");
+      }
+    }
+
+    await ctx.db.patch(args.noteId, {
+      folderId: args.folderId,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+
+// queries
+
+export const getNotes = query({
+    handler: async(ctx) =>{
+        const notes  = await ctx.db.query("notes").order("desc").take(10)
+        return notes
+    },
+})
