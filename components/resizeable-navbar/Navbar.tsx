@@ -32,7 +32,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="sticky top-5 w-full">
+    <div className="sticky backdrop-blur-md top-0 w-full">
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
