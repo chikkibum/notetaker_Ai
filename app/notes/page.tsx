@@ -1,6 +1,8 @@
 import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper";
 import NotesComponent from "./NotesComponent";
 import CreateNote from "./CreateNote";
+import { Suspense } from "react";
+import { getUserDetails } from "@/convex/users";
 
 const page = () => {
   return (
@@ -8,7 +10,9 @@ const page = () => {
       <div className="flex justify-end">
       <CreateNote/>
       </div>
+      <Suspense fallback={<div>loading</div>}>
       <NotesComponent/>
+      </Suspense>
     </MaxWidthWrapper>
   );
 };

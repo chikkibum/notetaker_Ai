@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { ThemeSwitcher } from "../theme-switcher";
 import { useConvexAuth } from "convex/react";
+import { NavUser } from "../nav-user";
 
 export function Header() {
   const navItems = [
@@ -60,6 +61,7 @@ export function Header() {
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
+
             {isLoading ? (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -68,25 +70,20 @@ export function Header() {
             ) : isAuthenticated ? (
               <>
                 <NavbarButton
-                  variant="secondary"
+                  variant="primary"
                   onClick={handleDashboardClick}
                 >
                   Dashboard
                 </NavbarButton>
-                <NavbarButton variant="primary">Book a call</NavbarButton>
+                {/* <NavbarButton variant="primary">Book a call</NavbarButton> */}
+                <NavUser />
               </>
             ) : (
               <>
-                <NavbarButton
-                  variant="secondary"
-                  onClick={handleLoginClick}
-                >
+                <NavbarButton variant="secondary" onClick={handleLoginClick}>
                   Login
                 </NavbarButton>
-                <NavbarButton
-                  variant="primary"
-                  onClick={handleSignupClick}
-                >
+                <NavbarButton variant="primary" onClick={handleSignupClick}>
                   Sign up
                 </NavbarButton>
               </>
@@ -96,23 +93,21 @@ export function Header() {
 
         {/* Mobile Navigation */}
         <MobileNav>
-
           <MobileNavHeader>
-
             <NavbarLogo />
 
             <MobileNavToggle
               isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             />
-            
           </MobileNavHeader>
 
           <MobileNavMenu
             isOpen={isMobileMenuOpen}
             onClose={() => setIsMobileMenuOpen(false)}
           >
-            <ThemeSwitcher/>
+            <NavUser />
+            <ThemeSwitcher />
             {navItems.map((item, idx) => (
               <a
                 key={`mobile-link-${idx}`}
