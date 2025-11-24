@@ -10,21 +10,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import ReadNote from "@/components/notes-dialog";
 
 const NotesComponent = () => {
   const notes = useQuery(api.notes.getNotes);
-  const user = useQuery(api.users.getUserDetails);
   const [viewNotes, setViewNotes] = useState(false);
 
   const isLoading = notes === undefined;
 
-  console.log(notes, "noets");
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Notes</h1>
+    <div className="">
 
       {/* ------- Loading State with Skeleton -------- */}
       {isLoading && (
@@ -75,7 +71,6 @@ const NotesComponent = () => {
               </CardContent>
 
               <CardFooter className="text-xs ">
-
                   <ReadNote
                     isOpen={viewNotes}
                     setIsOpen={setViewNotes}

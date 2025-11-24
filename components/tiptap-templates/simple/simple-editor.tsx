@@ -65,7 +65,7 @@ import { useWindowSize } from "@/hooks/use-window-size";
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
 // --- Components ---
-import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
@@ -149,7 +149,7 @@ const MainToolbarContent = ({
       {isMobile && <ToolbarSeparator />}
 
       <ToolbarGroup>
-        <ThemeToggle />
+        <ThemeSwitcher />
       </ToolbarGroup>
     </>
   );
@@ -190,10 +190,14 @@ export function SimpleEditor() {
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
     "main"
   );
-  const [editorData, setEditorData] = useState<{ html: string; json: any; text: string }>({
+  const [editorData, setEditorData] = useState<{
+    html: string;
+    json: any;
+    text: string;
+  }>({
     html: "",
     json: null,
-    text: ""
+    text: "",
   });
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -242,12 +246,12 @@ export function SimpleEditor() {
       setEditorData({ html, json, text });
     },
     // onPaste({ clipboardData }) {
-      
+
     //   if (!clipboardData) return false;
-  
+
     //   const text = clipboardData.getData("text/plain");
     //   console.log("Pasted plain text:", text);
-  
+
     //   // Example: if the user pastes an image file
     //   const files = Array.from(clipboardData.files || []);
     //   if (files.length > 0) {
@@ -259,7 +263,7 @@ export function SimpleEditor() {
     //     });
     //     return true; // we handled it
     //   }
-  
+
     //   // else let default behaviour continue
     //   return false;
     // },
@@ -276,17 +280,17 @@ export function SimpleEditor() {
     }
   }, [isMobile, mobileView]);
 
-  console.log(editorData,"editordata")
+  console.log(editorData, "editordata");
 
-    // Example: when user clicks “Save”, call onSave with current data
-    // const handleSave = () => {
-    //   if (!editor) return;
-    //   onSave({
-    //     html: editor.getHTML(),
-    //     json: editor.getJSON(),
-    //     text: editor.getText()
-    //   });
-    // };
+  // Example: when user clicks “Save”, call onSave with current data
+  // const handleSave = () => {
+  //   if (!editor) return;
+  //   onSave({
+  //     html: editor.getHTML(),
+  //     json: editor.getJSON(),
+  //     text: editor.getText()
+  //   });
+  // };
 
   return (
     <div className="simple-editor-wrapper max-h-[90svh]">

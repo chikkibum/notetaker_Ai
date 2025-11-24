@@ -66,7 +66,7 @@ const CreateNote = () => {
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">Create Note</Button>
+          <Button variant="outline" className="items-center">Create Note</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <form onSubmit={handleSubmit(onSubmit)}>
