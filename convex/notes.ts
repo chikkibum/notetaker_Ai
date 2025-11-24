@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { Doc, getAuthUserId } from "@convex-dev/auth/server";
 
 // Create a new note
 export const create = mutation({
@@ -250,12 +250,46 @@ export const moveToFolder = mutation({
   },
 });
 
-
 // queries
 
 export const getNotes = query({
-    handler: async(ctx) =>{
-        const notes  = await ctx.db.query("notes").order("desc").take(10)
-        return notes
-    },
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const notes = await ctx.db
+      .query("notes")
+      .withIndex("by_user_updated", (q) => q.eq("userId", userId))
+      .order("desc") // Orders by updatedAt in descending order
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("isDeleted"), false),
+          q.eq(q.field("isArchived"), false)
+        )
+      )
+      .take(10);
+    return notes;
+  },
+});
+
+export const getNoteByID =  query({
+  args:{
+    noteId: v.id("notes"),
+  },
+  handler: async(ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify the note belongs to the user
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new Error("Note not found");
+    }
+
+    return note
+  },
 })

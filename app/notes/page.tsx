@@ -2,12 +2,16 @@ import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper";
 import NotesComponent from "./NotesComponent";
 import CreateNote from "./CreateNote";
 import { Suspense } from "react";
-import { getUserDetails } from "@/convex/users";
+import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 
 const page = () => {
   return (
     <MaxWidthWrapper maxWidth="7xl" className="py-[48px] lg:py-[100px]">
-      <div className="flex justify-end">
+      <div className="flex items-center gap-2 justify-end">
+        <Button>
+          Ask Ai <Star/>
+        </Button>
       <CreateNote/>
       </div>
       <Suspense fallback={<div>loading</div>}>
