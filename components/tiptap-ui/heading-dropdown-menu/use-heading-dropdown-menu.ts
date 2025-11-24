@@ -7,7 +7,8 @@ import type { Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { HeadingIcon } from "@/components/tiptap-icons/heading-icon"
+// import { HeadingIcon } from "@/components/tiptap-icons/heading-icon"
+import { HeadingIcon } from "lucide-react"
 
 // --- Tiptap UI ---
 import {

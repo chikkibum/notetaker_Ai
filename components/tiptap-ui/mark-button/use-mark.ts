@@ -10,13 +10,15 @@ import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { isMarkInSchema, isNodeTypeSelected } from "@/lib/tiptap-utils"
 
 // --- Icons ---
-import { BoldIcon } from "@/components/tiptap-icons/bold-icon"
-import { Code2Icon } from "@/components/tiptap-icons/code2-icon"
-import { ItalicIcon } from "@/components/tiptap-icons/italic-icon"
-import { StrikeIcon } from "@/components/tiptap-icons/strike-icon"
-import { SubscriptIcon } from "@/components/tiptap-icons/subscript-icon"
-import { SuperscriptIcon } from "@/components/tiptap-icons/superscript-icon"
-import { UnderlineIcon } from "@/components/tiptap-icons/underline-icon"
+import { BoldIcon } from "lucide-react"
+import { Code2Icon } from "lucide-react"
+import { ItalicIcon } from "lucide-react"
+import { StrikethroughIcon } from "lucide-react"
+import { SubscriptIcon }  from "lucide-react"
+import { SuperscriptIcon } from "lucide-react"
+import { UnderlineIcon } from "lucide-react"
+
+
 
 export type Mark =
   | "bold"
@@ -54,7 +56,7 @@ export const markIcons = {
   bold: BoldIcon,
   italic: ItalicIcon,
   underline: UnderlineIcon,
-  strike: StrikeIcon,
+  strike: StrikethroughIcon,
   code: Code2Icon,
   superscript: SuperscriptIcon,
   subscript: SubscriptIcon,

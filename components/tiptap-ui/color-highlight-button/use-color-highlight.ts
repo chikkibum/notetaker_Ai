@@ -16,7 +16,8 @@ import {
 } from "@/lib/tiptap-utils"
 
 // --- Icons ---
-import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
+// import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
+import { HighlighterIcon } from "lucide-react"
 
 export const COLOR_HIGHLIGHT_SHORTCUT_KEY = "mod+shift+h"
 export const HIGHLIGHT_COLORS = [

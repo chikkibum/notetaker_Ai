@@ -17,12 +17,12 @@ import {
 } from "@/lib/tiptap-utils"
 
 // --- Icons ---
-import { HeadingOneIcon } from "@/components/tiptap-icons/heading-one-icon"
-import { HeadingTwoIcon } from "@/components/tiptap-icons/heading-two-icon"
-import { HeadingThreeIcon } from "@/components/tiptap-icons/heading-three-icon"
-import { HeadingFourIcon } from "@/components/tiptap-icons/heading-four-icon"
-import { HeadingFiveIcon } from "@/components/tiptap-icons/heading-five-icon"
-import { HeadingSixIcon } from "@/components/tiptap-icons/heading-six-icon"
+import { Heading1Icon } from "lucide-react"
+import { Heading2Icon } from "lucide-react"
+import { Heading3Icon } from "lucide-react"
+import { Heading4Icon } from "lucide-react"
+import { Heading5Icon } from "lucide-react"
+import { Heading6Icon } from "lucide-react"
 
 export type Level = 1 | 2 | 3 | 4 | 5 | 6
 
@@ -50,12 +50,12 @@ export interface UseHeadingConfig {
 }
 
 export const headingIcons = {
-  1: HeadingOneIcon,
-  2: HeadingTwoIcon,
-  3: HeadingThreeIcon,
-  4: HeadingFourIcon,
-  5: HeadingFiveIcon,
-  6: HeadingSixIcon,
+  1: Heading1Icon,
+  2: Heading2Icon,
+  3: Heading3Icon,
+  4: Heading4Icon,
+  5: Heading5Icon,
+  6: Heading6Icon,
 }
 
 export const HEADING_SHORTCUT_KEYS: Record<Level, string> = {
