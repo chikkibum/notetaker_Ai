@@ -55,9 +55,7 @@ import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 
 // --- Icons ---
-import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
-import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon";
-import { LinkIcon } from "@/components/tiptap-icons/link-icon";
+import { ArrowLeft, Highlighter, Link } from "lucide-react";
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
@@ -165,11 +163,11 @@ const MobileToolbarContent = ({
   <>
     <ToolbarGroup>
       <Button data-style="ghost" onClick={onBack}>
-        <ArrowLeftIcon className="tiptap-button-icon" />
+        <ArrowLeft className="tiptap-button-icon" />
         {type === "highlighter" ? (
-          <HighlighterIcon className="tiptap-button-icon" />
+          <Highlighter className="tiptap-button-icon" />
         ) : (
-          <LinkIcon className="tiptap-button-icon" />
+          <Link className="tiptap-button-icon" />
         )}
       </Button>
     </ToolbarGroup>
@@ -192,11 +190,11 @@ export function SimpleEditor() {
   );
   const [editorData, setEditorData] = useState<{
     html: string;
-    json: any;
+    json: Record<string, unknown>;
     text: string;
   }>({
     html: "",
-    json: null,
+    json: {},
     text: "",
   });
   const toolbarRef = useRef<HTMLDivElement>(null);
