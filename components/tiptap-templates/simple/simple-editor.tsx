@@ -190,6 +190,11 @@ export function SimpleEditor() {
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
     "main"
   );
+  const [editorData, setEditorData] = useState<{ html: string; json: any; text: string }>({
+    html: "",
+    json: null,
+    text: ""
+  });
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
@@ -230,6 +235,34 @@ export function SimpleEditor() {
       }),
     ],
     content,
+    onUpdate({ editor }) {
+      const html = editor.getHTML();
+      const json = editor.getJSON();
+      const text = editor.getText();
+      setEditorData({ html, json, text });
+    },
+    // onPaste({ clipboardData }) {
+      
+    //   if (!clipboardData) return false;
+  
+    //   const text = clipboardData.getData("text/plain");
+    //   console.log("Pasted plain text:", text);
+  
+    //   // Example: if the user pastes an image file
+    //   const files = Array.from(clipboardData.files || []);
+    //   if (files.length > 0) {
+    //     // handle file uploads
+    //     files.forEach(file => {
+    //       // your upload logic here
+    //       console.log("File pasted:", file);
+    //       // maybe call editor.chain().focus().insertImage({ src: ... })
+    //     });
+    //     return true; // we handled it
+    //   }
+  
+    //   // else let default behaviour continue
+    //   return false;
+    // },
   });
 
   const rect = useCursorVisibility({
@@ -242,6 +275,18 @@ export function SimpleEditor() {
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
+
+  console.log(editorData,"editordata")
+
+    // Example: when user clicks “Save”, call onSave with current data
+    // const handleSave = () => {
+    //   if (!editor) return;
+    //   onSave({
+    //     html: editor.getHTML(),
+    //     json: editor.getJSON(),
+    //     text: editor.getText()
+    //   });
+    // };
 
   return (
     <div className="simple-editor-wrapper max-h-[90svh]">

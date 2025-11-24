@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@auth/core": "0.37.0",
+    "@c15t/nextjs": "^1.8.1",
+    "@c15t/scripts": "^1.0.1",
     "@convex-dev/auth": "^0.0.90",
     "@floating-ui/react": "^0.27.16",
     "@hookform/resolvers": "^5.2.2",

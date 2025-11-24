@@ -6,7 +6,7 @@ import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { ThemeProvider } from "./providers/Theme-Provider";
 import { Header } from "@/components/resizeable-navbar/Navbar";
 import Head from "next/head";
-
+import { ConsentManager } from "./consent-manager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,24 +29,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ConvexAuthNextjsServerProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <ConvexClientProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
+        <ConvexAuthNextjsServerProvider>
+          <html lang="en" suppressHydrationWarning>
+            <body
+              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-              <Header/>
-              {children}
-            </ThemeProvider>
-          </ConvexClientProvider>
-        </body>
-      </html>
-    </ConvexAuthNextjsServerProvider>
-  );
+    		<ConsentManager>
+    			
+              <ConvexClientProvider>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  <Header/>
+                  {children}
+                </ThemeProvider>
+              </ConvexClientProvider>
+            
+    		</ConsentManager>
+    	</body>
+          </html>
+        </ConvexAuthNextjsServerProvider>
+      )
 }

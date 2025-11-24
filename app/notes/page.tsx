@@ -9,8 +9,8 @@ const page = () => {
   return (
     <MaxWidthWrapper maxWidth="7xl" className="py-[48px] lg:py-[100px]">
       <div className="flex items-center gap-2 justify-end">
-        <Button>
-          Ask Ai <Star/>
+        <Button className="items-center">
+          Ask Ai <Star className="text-xs" size={2}/>
         </Button>
       <CreateNote/>
       </div>
