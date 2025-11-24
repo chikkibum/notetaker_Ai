@@ -290,6 +290,6 @@ export const getNoteByID =  query({
       throw new Error("Note not found");
     }
 
-    return note
+    return note;
   },
 })
