@@ -13,6 +13,10 @@ import {
 import { cn } from "@/lib/utils";
 import { FunctionReturnType } from "convex/server";
 import { api } from "@/convex/_generated/api";
+import { TipTapRenderer } from "@/components/tiptap-renderer";
+import { useRouter } from "next/navigation";
+import { ExternalLink } from "lucide-react";
+import { Id } from "@/convex/_generated/dataModel";
 
 // Get the return type of a specific query
 type NoteData = FunctionReturnType<typeof api.notes.getNoteByID>;
@@ -24,38 +28,52 @@ interface ReadNoteProps {
 }
 
 const ReadNote = ({ data, isOpen, setIsOpen }: ReadNoteProps) => {
-  console.log(data, "data ssopen={isOpen} onOpenChange={setIsOpen}");
+  const router = useRouter();
+  const noteType = data?.noteType || "richnote"; // Default to richnote for backward compatibility
+  const isRichNote = noteType === "richnote";
+
+  const handleOpenInEditor = () => {
+    if (data?._id) {
+      router.push(`/notes/${data._id}/edit`);
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">View Note</Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[640px] w-full">
+      <DialogContent className="sm:max-w-[640px] w-full max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Note Details</DialogTitle>
-          <DialogDescription>View the details of this note.</DialogDescription>
+          <DialogTitle>{data?.title || "Untitled Note"}</DialogTitle>
+          <DialogDescription>
+            {isRichNote ? "Rich text note" : "Quick note"}
+          </DialogDescription>
         </DialogHeader>
 
         {/* Scrollable area for note content */}
-        <div className="max-h-[60vh] overflow-auto pr-2 space-y-4">
-          {/* Title */}
-          <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1 text-muted-foreground">
-              Title
-            </label>
-            <div className="rounded-md border px-3 py-2 text-sm bg-muted/50">
-              {data?.title || "Untitled"}
-            </div>
-          </div>
-
+        <div className="flex-1 overflow-auto pr-2 space-y-4 min-h-0">
           {/* Content */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1 text-muted-foreground">
+            <label className="text-sm font-medium mb-2 text-muted-foreground">
               Content
             </label>
-            <div className="rounded-md border px-3 py-2 text-sm bg-muted/50 min-h-[200px] whitespace-pre-wrap">
-              {/* {data?.content || "No content"} */}
+            <div className="rounded-md border px-3 py-2 text-sm bg-muted/50 min-h-[200px]">
+              {isRichNote ? (
+                data?.content ? (
+                  <TipTapRenderer content={data.content} />
+                ) : (
+                  <p className="text-muted-foreground">No content</p>
+                )
+              ) : (
+                <p className="whitespace-pre-wrap">
+                  {typeof data?.content === "string"
+                    ? data.content || "No content"
+                    : "No content"}
+                </p>
+              )}
             </div>
           </div>
 
@@ -91,7 +109,17 @@ const ReadNote = ({ data, isOpen, setIsOpen }: ReadNoteProps) => {
           )}
         </div>
 
-        <DialogFooter className="mt-2">
+        <DialogFooter className="mt-2 flex gap-2">
+          {isRichNote && (
+            <Button
+              type="button"
+              variant="default"
+              onClick={handleOpenInEditor}
+            >
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Open in Editor
+            </Button>
+          )}
           <DialogClose asChild>
             <Button type="button" variant="outline">
               Close

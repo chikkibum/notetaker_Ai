@@ -6,7 +6,8 @@ import { Doc, getAuthUserId } from "@convex-dev/auth/server";
 export const create = mutation({
   args: {
     title: v.string(),
-    content: v.any(), // TipTap/ProseMirror JSON content
+    content: v.any(), // TipTap/ProseMirror JSON content or simple text for quicknotes
+    noteType: v.optional(v.union(v.literal("quicknote"), v.literal("richnote"))),
     folderId: v.union(v.id("folders"), v.null()),
     tags: v.optional(v.array(v.string())),
   },
@@ -21,6 +22,7 @@ export const create = mutation({
       userId,
       title: args.title,
       content: args.content,
+      noteType: args.noteType || "richnote", // Default to richnote for backward compatibility
       folderId: args.folderId,
       tags: args.tags || [],
       isArchived: false,
@@ -38,7 +40,8 @@ export const update = mutation({
   args: {
     noteId: v.id("notes"),
     title: v.optional(v.string()),
-    content: v.optional(v.any()), // TipTap/ProseMirror JSON content
+    content: v.optional(v.any()), // TipTap/ProseMirror JSON content or simple text for quicknotes
+    noteType: v.optional(v.union(v.literal("quicknote"), v.literal("richnote"))),
     folderId: v.optional(v.union(v.id("folders"), v.null())),
     tags: v.optional(v.array(v.string())),
   },
@@ -66,6 +69,9 @@ export const update = mutation({
     }
     if (args.content !== undefined) {
       updates.content = args.content;
+    }
+    if (args.noteType !== undefined) {
+      updates.noteType = args.noteType;
     }
     if (args.folderId !== undefined) {
       updates.folderId = args.folderId;
@@ -292,4 +298,72 @@ export const getNoteByID =  query({
 
     return note;
   },
-})
+});
+
+// Get only rich notes (for /simple route)
+export const getRichNotes = query({
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const notes = await ctx.db
+      .query("notes")
+      .withIndex("by_user_noteType", (q) => 
+        q.eq("userId", userId).eq("noteType", "richnote")
+      )
+      .order("desc")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("isDeleted"), false),
+          q.eq(q.field("isArchived"), false)
+        )
+      )
+      .collect();
+    
+    // Also include notes without noteType (backward compatibility - treat as richnote)
+    const notesWithoutType = await ctx.db
+      .query("notes")
+      .withIndex("by_user_updated", (q) => q.eq("userId", userId))
+      .order("desc")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("isDeleted"), false),
+          q.eq(q.field("isArchived"), false),
+          q.eq(q.field("noteType"), undefined)
+        )
+      )
+      .collect();
+    
+    // Combine and sort by updatedAt
+    const allNotes = [...notes, ...notesWithoutType];
+    return allNotes.sort((a, b) => b.updatedAt - a.updatedAt);
+  },
+});
+
+// Get only quick notes
+export const getQuickNotes = query({
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const notes = await ctx.db
+      .query("notes")
+      .withIndex("by_user_noteType", (q) => 
+        q.eq("userId", userId).eq("noteType", "quicknote")
+      )
+      .order("desc")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("isDeleted"), false),
+          q.eq(q.field("isArchived"), false)
+        )
+      )
+      .collect();
+    
+    return notes;
+  },
+});

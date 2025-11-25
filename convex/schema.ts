@@ -9,7 +9,8 @@ const schema = defineSchema({
   notes: defineTable({
     userId: v.id("users"), // Reference to the user who owns the note
     title: v.string(), // Note title
-    content: v.any(), // TipTap/ProseMirror JSON content
+    content: v.any(), // TipTap/ProseMirror JSON content or simple text for quicknotes
+    noteType: v.optional(v.union(v.literal("quicknote"), v.literal("richnote"))), // Type of note (defaults to richnote for backward compatibility)
     folderId: v.union(v.id("folders"), v.null()), // Optional folder organization
     tags: v.array(v.string()), // Array of tags for categorization
     isArchived: v.boolean(), // Whether the note is archived
@@ -22,7 +23,8 @@ const schema = defineSchema({
     .index("by_user_updated", ["userId", "updatedAt"])
     .index("by_folder", ["folderId"])
     .index("by_user_archived", ["userId", "isArchived"])
-    .index("by_user_deleted", ["userId", "isDeleted"]),
+    .index("by_user_deleted", ["userId", "isDeleted"])
+    .index("by_user_noteType", ["userId", "noteType"]),
   
   // Folders table - for organizing notes into folders
   folders: defineTable({

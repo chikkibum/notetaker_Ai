@@ -73,19 +73,52 @@ import "@/components/tiptap-templates/simple/simple-editor.scss";
 
 import content from "@/components/tiptap-templates/simple/data/content.json";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Save } from "lucide-react";
+
+interface SimpleEditorProps {
+  initialContent?: any; // TipTap JSON content
+  onSave?: (data: { html: string; json: any; text: string }) => void;
+  title?: string;
+  onTitleChange?: (title: string) => void;
+}
 
 const MainToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
   isMobile,
+  onSave,
+  editor,
 }: {
   onHighlighterClick: () => void;
   onLinkClick: () => void;
   isMobile: boolean;
+  onSave?: (data: { html: string; json: any; text: string }) => void;
+  editor: any;
 }) => {
+  const handleSave = () => {
+    if (!editor || !onSave) return;
+    onSave({
+      html: editor.getHTML(),
+      json: editor.getJSON(),
+      text: editor.getText(),
+    });
+  };
+
   return (
     <>
       <Spacer />
+
+      {onSave && (
+        <>
+          <ToolbarGroup>
+            <Button data-style="ghost" onClick={handleSave}>
+              <Save className="tiptap-button-icon" />
+              Save
+            </Button>
+          </ToolbarGroup>
+          <ToolbarSeparator />
+        </>
+      )}
 
       <ToolbarGroup>
         <UndoRedoButton action="undo" />
@@ -182,7 +215,12 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor() {
+export function SimpleEditor({
+  initialContent,
+  onSave,
+  title,
+  onTitleChange,
+}: SimpleEditorProps = {}) {
   const isMobile = useIsBreakpoint();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
@@ -198,6 +236,7 @@ export function SimpleEditor() {
     text: "",
   });
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const [localTitle, setLocalTitle] = useState(title || "");
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -236,7 +275,7 @@ export function SimpleEditor() {
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content,
+    content: initialContent || content,
     onUpdate({ editor }) {
       const html = editor.getHTML();
       const json = editor.getJSON();
@@ -272,26 +311,46 @@ export function SimpleEditor() {
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
 
+  // Update editor content when initialContent changes
+  useEffect(() => {
+    if (editor && initialContent) {
+      editor.commands.setContent(initialContent);
+    }
+  }, [editor, initialContent]);
+
+  // Update local title when prop changes
+  useEffect(() => {
+    if (title !== undefined) {
+      setLocalTitle(title);
+    }
+  }, [title]);
+
+  // Handle title change
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setLocalTitle(newTitle);
+    onTitleChange?.(newTitle);
+  };
+
   useEffect(() => {
     if (!isMobile && mobileView !== "main") {
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
 
-  console.log(editorData, "editordata");
-
-  // Example: when user clicks “Save”, call onSave with current data
-  // const handleSave = () => {
-  //   if (!editor) return;
-  //   onSave({
-  //     html: editor.getHTML(),
-  //     json: editor.getJSON(),
-  //     text: editor.getText()
-  //   });
-  // };
-
   return (
     <div className="simple-editor-wrapper max-h-[90svh]">
+      {title !== undefined && (
+        <div className="mb-4">
+          <input
+            type="text"
+            value={localTitle}
+            onChange={handleTitleChange}
+            placeholder="Enter title..."
+            className="w-full text-2xl font-bold bg-transparent border-none outline-none focus:outline-none p-2"
+          />
+        </div>
+      )}
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
           ref={toolbarRef}
@@ -308,6 +367,8 @@ export function SimpleEditor() {
               onHighlighterClick={() => setMobileView("highlighter")}
               onLinkClick={() => setMobileView("link")}
               isMobile={isMobile}
+              onSave={onSave}
+              editor={editor}
             />
           ) : (
             <MobileToolbarContent

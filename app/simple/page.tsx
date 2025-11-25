@@ -1,10 +1,5 @@
-import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
-import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper";
+import { SimpleDocuments } from "./SimpleDocuments";
 
 export default function Page() {
-  return (
-
-      <SimpleEditor />
-
-  );
+  return <SimpleDocuments />;
 }
