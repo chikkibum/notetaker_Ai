@@ -18,6 +18,16 @@ import { useState } from "react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type ViewMode = "list" | "create" | "edit";
 
@@ -25,6 +35,8 @@ export function SimpleDocuments() {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [editingNoteId, setEditingNoteId] = useState<Id<"notes"> | null>(null);
   const [title, setTitle] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<Id<"notes"> | null>(null);
   const richNotes = useQuery(api.notes.getRichNotes);
   const createNote = useMutation(api.notes.create);
   const updateNote = useMutation(api.notes.update);
@@ -68,13 +80,22 @@ export function SimpleDocuments() {
     }
   };
 
-  const handleDelete = async (noteId: Id<"notes">) => {
-    if (confirm("Are you sure you want to delete this document?")) {
-      try {
-        await deleteNote({ noteId });
-      } catch (error) {
-        console.error("Failed to delete document:", error);
-      }
+  const handleDeleteClick = (noteId: Id<"notes">) => {
+    setNoteToDelete(noteId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!noteToDelete) return;
+    
+    try {
+      await deleteNote({ noteId: noteToDelete });
+      setDeleteDialogOpen(false);
+      setNoteToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete document:", error);
+      setDeleteDialogOpen(false);
+      setNoteToDelete(null);
     }
   };
 
@@ -181,7 +202,7 @@ export function SimpleDocuments() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleDelete(note._id)}
+                    onClick={() => handleDeleteClick(note._id)}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
@@ -192,6 +213,26 @@ export function SimpleDocuments() {
           </div>
         </ScrollArea>
       )}
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the document.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MaxWidthWrapper>
   );
 }

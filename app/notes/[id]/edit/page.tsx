@@ -10,6 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function EditNotePage() {
   const params = useParams();
@@ -20,6 +30,7 @@ export default function EditNotePage() {
   const deleteNote = useMutation(api.notes.softDelete);
   const [title, setTitle] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (note) {
@@ -46,16 +57,20 @@ export default function EditNotePage() {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     if (!noteId) return;
     
-    if (confirm("Are you sure you want to delete this note?")) {
-      try {
-        await deleteNote({ noteId });
-        router.push("/notes");
-      } catch (error) {
-        console.error("Failed to delete note:", error);
-      }
+    try {
+      await deleteNote({ noteId });
+      setDeleteDialogOpen(false);
+      router.push("/notes");
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+      setDeleteDialogOpen(false);
     }
   };
 
@@ -115,7 +130,7 @@ export default function EditNotePage() {
         </Button>
         <Button
           variant="destructive"
-          onClick={handleDelete}
+          onClick={handleDeleteClick}
           disabled={isSaving}
         >
           <Trash2 className="mr-2 h-4 w-4" />
@@ -133,6 +148,26 @@ export default function EditNotePage() {
         title={title}
         onTitleChange={setTitle}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the note.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MaxWidthWrapper>
   );
 }

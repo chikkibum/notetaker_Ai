@@ -78,6 +78,12 @@ const CreateNote = () => {
       console.error("Failed to create note:", error);
     }
   };
+
+  const handleRichNoteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsOpen(false);
+    router.push("/simple");
+  };
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -160,13 +166,19 @@ const CreateNote = () => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting
-                  ? "Creating..."
-                  : noteType === "richnote"
-                  ? "Create Rich Note"
-                  : "Create Note"}
-              </Button>
+              {noteType === "richnote" ? (
+                <Button
+                  type="button"
+                  onClick={handleRichNoteClick}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating..." : "Create Rich Note"}
+                </Button>
+              ) : (
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Create Note"}
+                </Button>
+              )}
             </DialogFooter>
           </form>
         </DialogContent>
