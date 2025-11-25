@@ -24,35 +24,35 @@ const NotesComponent = () => {
   // Helper to get note type (default to richnote for backward compatibility)
   const getNoteType = (note: any): "quicknote" | "richnote" => {
     return note.noteType || "richnote";
-  };
+  };  
 
   // Helper to get content preview
-  const getContentPreview = (note: any): string => {
-    const noteType = getNoteType(note);
-    if (noteType === "quicknote") {
-      return typeof note.content === "string" 
-        ? note.content.substring(0, 100) + (note.content.length > 100 ? "..." : "")
-        : "No content";
-    } else {
-      // For rich notes, try to extract text from JSON
-      if (note.content && typeof note.content === "object") {
-        const extractText = (obj: any): string => {
-          if (typeof obj === "string") return obj;
-          if (Array.isArray(obj)) {
-            return obj.map(extractText).join(" ");
-          }
-          if (obj && typeof obj === "object") {
-            if (obj.text) return obj.text;
-            if (obj.content) return extractText(obj.content);
-          }
-          return "";
-        };
-        const text = extractText(note.content);
-        return text.substring(0, 100) + (text.length > 100 ? "..." : "") || "Rich text content";
-      }
-      return "Rich text content";
-    }
-  };
+  // const getContentPreview = (note: Note): string => {
+  //   const noteType = getNoteType(note);
+  //   if (noteType === "quicknote") {
+  //     return typeof note.content === "string" 
+  //       ? note.content.substring(0, 100) + (note.content.length > 100 ? "..." : "")
+  //       : "No content";
+  //   } else {
+  //     // For rich notes, try to extract text from JSON
+  //     if (note.content && typeof note.content === "object") {
+  //       const extractText = (obj: any): string => {
+  //         if (typeof obj === "string") return obj;
+  //         if (Array.isArray(obj)) {
+  //           return obj.map(extractText).join(" ");
+  //         }
+  //         if (obj && typeof obj === "object") {
+  //           if (obj.text) return obj.text;
+  //           if (obj.content) return extractText(obj.content);
+  //         }
+  //         return "";
+  //       };
+  //       const text = extractText(note.content);
+  //       return text.substring(0, 100) + (text.length > 100 ? "..." : "") || "Rich text content";
+  //     }
+  //     return "Rich text content";
+  //   }
+  // };
 
   return (
     <div className="">
@@ -122,11 +122,11 @@ const NotesComponent = () => {
                   </CardDescription>
                 </CardHeader>
 
-                <CardContent>
+                {/* <CardContent>
                   <p className="text-sm text-muted-foreground line-clamp-3">
                     {getContentPreview(data)}
                   </p>
-                </CardContent>
+                </CardContent> */}
 
                 <CardFooter>
                   <ReadNote
