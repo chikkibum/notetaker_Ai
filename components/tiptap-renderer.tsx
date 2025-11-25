@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
+import type { JSONContent } from '@tiptap/core';
 import { StarterKit } from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
@@ -20,7 +21,7 @@ import "@/components/tiptap-node/heading-node/heading-node.scss";
 import "@/components/tiptap-node/paragraph-node/paragraph-node.scss";
 
 interface TipTapRendererProps {
-  content: any; // TipTap JSON content
+  content: JSONContent; // TipTap JSON content
   className?: string;
 }
 

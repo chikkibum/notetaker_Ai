@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
+import { Editor, EditorContent, EditorContext, HTMLContent, JSONContent, useEditor } from "@tiptap/react";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
@@ -92,8 +92,8 @@ const MainToolbarContent = ({
   onHighlighterClick: () => void;
   onLinkClick: () => void;
   isMobile: boolean;
-  onSave?: (data: { html: string; json: any; text: string }) => void;
-  editor: any;
+  onSave?: (data: { html: HTMLContent; json: JSONContent; text: string }) => void;
+  editor: Editor | null;
 }) => {
   const handleSave = () => {
     if (!editor || !onSave) return;
@@ -339,15 +339,15 @@ export function SimpleEditor({
   }, [isMobile, mobileView]);
 
   return (
-    <div className="simple-editor-wrapper max-h-[90svh]">
+    <div className="simple-editor-wrapper max-h-[90svh] w-full max-w-full overflow-hidden">
       {title !== undefined && (
-        <div className="mb-4">
+        <div className="mb-4 w-full max-w-full">
           <input
             type="text"
             value={localTitle}
             onChange={handleTitleChange}
             placeholder="Enter title..."
-            className="w-full text-2xl font-bold bg-transparent border-none outline-none focus:outline-none p-2"
+            className="w-full max-w-full text-2xl font-bold bg-transparent border-none outline-none focus:outline-none p-2"
           />
         </div>
       )}
@@ -377,7 +377,7 @@ export function SimpleEditor({
             />
           )}
         </Toolbar>
-        <ScrollArea className="h-[90svh] ">
+        <ScrollArea className="h-[90svh] w-full max-w-full">
           <EditorContent
             editor={editor}
             role="presentation"
