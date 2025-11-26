@@ -7,6 +7,7 @@ import { Header } from "@/components/resizeable-navbar/Navbar";
 import { ConsentManager } from "./consent-manager";
 import { fonts } from "@/lib/fonts";
 import { JetBrains_Mono } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -44,6 +45,12 @@ export default function RootLayout({
               </ThemeProvider>
             </ConvexClientProvider>
           </ConsentManager>
+          <Toaster 
+          position="top-right"
+          richColors
+          duration={3000}
+          closeButton
+          />
         </body>
       </html>
     </ConvexAuthNextjsServerProvider>

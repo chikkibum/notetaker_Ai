@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { tryCatch } from "@/lib/tryCatch";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z
@@ -45,8 +47,13 @@ export function LoginForm({
   const { signIn } = useAuthActions();
 
   const onSubmit = async (data: LoginFormData) => {
-    const { signingIn, redirect } = await signIn("password", data);
-    console.log(signingIn, redirect, "Response");
+      const {data: response, error} = await tryCatch(signIn("password", data));
+      if (error) {
+        toast.error("Login failed");
+      }
+      if (response) {
+        toast.success("Login successful");
+      }
   };
 
   return (

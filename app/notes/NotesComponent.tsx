@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import ReadNote from "@/components/notes-dialog";
 import { FileText, StickyNote } from "lucide-react";
+import { Typography } from "@/components/ui/typography";
 
 const NotesComponent = () => {
   const notes = useQuery(api.notes.getNotes);
@@ -94,7 +95,9 @@ const NotesComponent = () => {
                 <CardHeader>
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="flex-1 line-clamp-2">
-                      {data.title || "Untitled Note"}
+                      <Typography size="xl" weight="semibold" color="accent" align="left" tracking="tight">
+                        {data.title || "Untitled Note"}
+                        </Typography>
                     </CardTitle>
                     <Badge
                       variant={isQuickNote ? "default" : "secondary"}

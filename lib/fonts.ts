@@ -55,6 +55,8 @@ const satoshi = localFont({
   ],
   variable: '--font-satoshi',
   display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'sans-serif'],
 })
 
 export const fonts = {

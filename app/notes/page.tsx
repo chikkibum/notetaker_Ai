@@ -1,3 +1,4 @@
+
 import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper";
 import NotesComponent from "./NotesComponent";
 import CreateNote from "./CreateNote";
