@@ -38,9 +38,9 @@
   --sidebar-accent-foreground: oklch(0.2101 0.0318 264.6645);
   --sidebar-border: oklch(0.9276 0.0058 264.5313);
   --sidebar-ring: oklch(0.6716 0.1368 48.5130);
-  --font-sans: Parkinsans, ui-sans-serif, sans-serif, system-ui;
+  --font-sans: var(--font-satoshi), ui-sans-serif, sans-serif, system-ui;
   --font-serif: serif;
-  --font-mono: JetBrains Mono, monospace;
+  --font-mono: var(--font-jetbrains-mono), monospace;
   --radius: 0.75rem;
   --shadow-x: 0px;
   --shadow-y: 1px;
@@ -96,9 +96,9 @@
   --sidebar-accent-foreground: oklch(0.8109 0 0);
   --sidebar-border: oklch(0.2520 0 0);
   --sidebar-ring: oklch(0.7214 0.1337 49.9802);
-  --font-sans: Parkinsans, ui-sans-serif, sans-serif, system-ui;
+  --font-sans: var(--font-satoshi), ui-sans-serif, sans-serif, system-ui;
   --font-serif: serif;
-  --font-mono: JetBrains Mono, monospace;
+  --font-mono: var(--font-jetbrains-mono), monospace;
   --radius: 0.75rem;
   --shadow-x: 0px;
   --shadow-y: 1px;
@@ -154,8 +154,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: Parkinsans, ui-sans-serif, sans-serif, system-ui;
-  --font-mono: JetBrains Mono, monospace;
+  --font-sans: var(--font-satoshi), ui-sans-serif, sans-serif, system-ui;
+  --font-mono: var(--font-jetbrains-mono), monospace;
   --font-serif: serif;
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -191,6 +191,7 @@
 
 body {
   letter-spacing: var(--tracking-normal);
+  font-family: var(--font-sans);
 }
 
 @layer base {
@@ -198,7 +199,7 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans font-mono;
     letter-spacing: var(--tracking-normal);
   }
 }

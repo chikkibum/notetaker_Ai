@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./providers/ConvexClientProvide";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { ThemeProvider } from "./providers/Theme-Provider";
 import { Header } from "@/components/resizeable-navbar/Navbar";
-import Head from "next/head";
 import { ConsentManager } from "./consent-manager";
+import { fonts } from "@/lib/fonts";
+import { JetBrains_Mono } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", ],
+  variable: "--font-jetbrains-mono",
 });
 
 export const metadata: Metadata = {
@@ -29,28 +26,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-        <ConvexAuthNextjsServerProvider>
-          <html lang="en" suppressHydrationWarning>
-            <body
-              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-    		<ConsentManager>
-    			
-              <ConvexClientProvider>
-                <ThemeProvider
-                  attribute="class"
-                  defaultTheme="system"
-                  enableSystem
-                  disableTransitionOnChange
-                >
-                  <Header/>
-                  {children}
-                </ThemeProvider>
-              </ConvexClientProvider>
-            
-    		</ConsentManager>
-    	</body>
-          </html>
-        </ConvexAuthNextjsServerProvider>
-      )
+    <ConvexAuthNextjsServerProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${fonts.satoshi.variable} ${jetbrainsMono.variable} antialiased`}
+        >
+          <ConsentManager>
+            <ConvexClientProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <Header />
+                {children}
+              </ThemeProvider>
+            </ConvexClientProvider>
+          </ConsentManager>
+        </body>
+      </html>
+    </ConvexAuthNextjsServerProvider>
+  );
 }
