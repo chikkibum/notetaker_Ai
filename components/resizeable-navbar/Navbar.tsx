@@ -53,7 +53,7 @@ export function Header() {
   };
 
   return (
-    <div className="sticky backdrop-blur-md top-2 w-full">
+    <div className="sticky backdrop-blur-md top-0 z-50 w-full">
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
