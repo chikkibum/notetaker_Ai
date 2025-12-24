@@ -1,14 +1,16 @@
 "use client"
 
 import { siteConfig } from "@/lib/site-config"
+import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper"
 
 export function NewReleasePromo() {
   const { newReleasePromo } = siteConfig
 
   return (
     <section className="mt-12 w-full">
-      <div className="mx-auto max-w-4xl rounded-[40px] border border-black/5 dark:border-white/20 p-2 shadow-sm">
-        <div className="relative mx-auto h-[400px] max-w-4xl overflow-hidden rounded-[38px] border border-black/5 dark:border-white/20 bg-primary p-2 shadow-sm">
+      <MaxWidthWrapper maxWidth="4xl">
+        <div className="rounded-[40px] border border-black/5 dark:border-white/20 p-2 shadow-sm">
+          <div className="relative h-[400px] w-full overflow-hidden rounded-[38px] border border-black/5 dark:border-white/20 bg-primary p-2 shadow-sm">
           {/* Subtle radial glow from center */}
           <div
             className="absolute inset-0 z-0"
@@ -109,8 +111,9 @@ export function NewReleasePromo() {
               {newReleasePromo.wordmark}
             </h1>
           </div>
+          </div>
         </div>
-      </div>
+      </MaxWidthWrapper>
     </section>
   )
 }

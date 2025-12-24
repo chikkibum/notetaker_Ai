@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Plus, Minus } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { siteConfig } from "@/lib/site-config"
+import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper"
 
 export function FAQSection() {
   const [openItems, setOpenItems] = useState<number[]>([])
@@ -19,7 +20,7 @@ export function FAQSection() {
       <div className="bg-primary/20 absolute top-1/2 -right-20 z-[-1] h-64 w-64 rounded-full opacity-80 blur-3xl"></div>
       <div className="bg-primary/20 absolute top-1/2 -left-20 z-[-1] h-64 w-64 rounded-full opacity-80 blur-3xl"></div>
 
-      <div className="z-10 container mx-auto px-4">
+      <MaxWidthWrapper className="z-10">
         <motion.div
           className="flex justify-center"
           initial={{ opacity: 0, y: 20 }}
@@ -99,7 +100,7 @@ export function FAQSection() {
             </motion.div>
           ))}
         </div>
-      </div>
+      </MaxWidthWrapper>
     </section>
   )
 }

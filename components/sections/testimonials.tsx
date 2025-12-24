@@ -1,5 +1,6 @@
 import { Marquee } from "@/components/magic-ui/marquee"
 import { siteConfig } from "@/lib/site-config"
+import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper"
 
 const testimonials = siteConfig.testimonials.testimonials
 const firstColumn = testimonials.slice(0, 3)
@@ -39,7 +40,7 @@ export function TestimonialsSection() {
 
   return (
     <section id="testimonials" className="mb-24">
-      <div className="mx-auto max-w-7xl">
+      <MaxWidthWrapper>
         <div className="mx-auto max-w-[540px]">
           <div className="flex justify-center">
             <button
@@ -96,7 +97,7 @@ export function TestimonialsSection() {
             {testimonialsConfig.cta.text}
           </button>
         </div>
-      </div>
+      </MaxWidthWrapper>
     </section>
   )
 }

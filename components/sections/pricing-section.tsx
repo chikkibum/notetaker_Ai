@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Check, Sparkles } from "lucide-react"
 import { useState } from "react"
 import { siteConfig } from "@/lib/site-config"
+import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper"
 
 export function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(false)
@@ -11,7 +12,7 @@ export function PricingSection() {
 
   return (
     <section className="relative py-24 px-4">
-      <div className="max-w-7xl mx-auto">
+      <MaxWidthWrapper>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -151,7 +152,7 @@ export function PricingSection() {
             {pricing.bottomCta.contactText}
           </motion.button>
         </motion.div>
-      </div>
+      </MaxWidthWrapper>
     </section>
   )
 }

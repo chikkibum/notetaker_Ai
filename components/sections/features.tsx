@@ -10,6 +10,7 @@ import { motion, useInView } from "framer-motion"
 import { Suspense, useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/site-config"
+import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper"
 
 export default function Features() {
   const { features } = siteConfig
@@ -44,13 +45,14 @@ export default function Features() {
     <section id="features" className="text-foreground relative overflow-hidden py-12 sm:py-24 md:py-32">
       <div className="bg-primary absolute -top-10 left-1/2 h-16 w-44 -translate-x-1/2 rounded-full opacity-40 blur-3xl select-none"></div>
       <div className="via-primary/50 absolute top-0 left-1/2 h-px w-3/5 -translate-x-1/2 bg-gradient-to-r from-transparent to-transparent transition-all ease-in-out"></div>
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 50 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-        transition={{ duration: 0.5, delay: 0 }}
-        className="container mx-auto flex flex-col items-center gap-6 sm:gap-12"
-      >
+      <MaxWidthWrapper>
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          transition={{ duration: 0.5, delay: 0 }}
+          className="flex flex-col items-center gap-6 sm:gap-12"
+        >
         <h2
           className={cn(
             "via-foreground mb-8 bg-gradient-to-b from-zinc-800 to-zinc-700 bg-clip-text text-center text-4xl font-semibold tracking-tighter text-transparent md:text-[54px] md:leading-[60px]",
@@ -447,6 +449,7 @@ export default function Features() {
           </div>
         </FollowerPointerCard>
       </motion.div>
+      </MaxWidthWrapper>
     </section>
   )
 }

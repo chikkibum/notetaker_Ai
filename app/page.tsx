@@ -11,9 +11,9 @@ export default function Home() {
     <main className="flex min-h-screen font-sans font-medium  text-6xl  flex-col items-center justify-between ">
       <Hero />
 
-{/* Features Section */}
-<div id="features">
-        <Features/>
+      {/* Features Section */}
+      <div id="features">
+        <Features />
       </div>
 
       {/* Pricing Section */}
@@ -29,7 +29,7 @@ export default function Home() {
       <NewReleasePromo />
 
       {/* FAQ Section */}
-      <div id="faq">
+      <div id="faq" className="mb-12">
         <FAQSection />
       </div>
 

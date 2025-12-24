@@ -21,7 +21,7 @@ export default function Hero() {
   return (
     <>
       <section className="relative overflow-hidden min-h-screen flex flex-col">
-        <div className="container mx-auto px-4  relative z-10 flex-1 flex flex-col">
+        <div className="max-w-7xl mx-auto px-4 relative z-10 flex-1 flex flex-col w-full">
           <div className="mx-auto max-w-4xl text-center flex-1 flex flex-col justify-center">
             {/* Badge */}
             <motion.div
