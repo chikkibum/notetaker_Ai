@@ -39,6 +39,23 @@ const schema = defineSchema({
     .index("by_user", ["userId"])
     .index("by_parent", ["parentId"])
     .index("by_user_parent", ["userId", "parentId"]),
+
+
+    noteEmbeddings: defineTable({
+      content: v.string(),
+      embedding: v.array(v.float64()),
+      noteId: v.id("notes"),
+      userId: v.id("users"),
+    })
+      .index("by_noteId", ["noteId"])
+      .vectorIndex("by_embedding", {
+        vectorField: "embedding",
+        dimensions: 768,
+        filterFields: ["userId"],
+      }),
 });
- 
+
+
+
+
 export default schema;
