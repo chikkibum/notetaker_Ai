@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc, getAuthUserId } from "@convex-dev/auth/server";
 
@@ -365,5 +365,77 @@ export const getQuickNotes = query({
       .collect();
     
     return notes;
+  },
+});
+
+
+
+export const createNoteWithEmbeddings = internalMutation({
+  args: {
+    title: v.string(),
+    body: v.string(),
+    userId: v.id("users"),
+    embeddings: v.array(
+      v.object({
+        embedding: v.array(v.float64()),
+        content: v.string(),
+      })
+    ),
+  },
+  returns: v.id("notes"),
+  handler: async (ctx, args) => {
+    const noteId = await ctx.db.insert("notes", {
+      title: args.title,
+      content: args.body,
+      noteType: "richnote",
+      folderId: null,
+      tags: [],
+      isArchived: false,
+      isDeleted: false,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      userId: args.userId,
+    });
+
+    for (const embeddingData of args.embeddings) {
+      await ctx.db.insert("noteEmbeddings", {
+        content: embeddingData.content,
+        embedding: embeddingData.embedding,
+        noteId,
+        userId: args.userId,
+      });
+    }
+
+    return noteId;
+  },
+});
+
+
+export const fetchNotesByEmbeddingIds = internalQuery({
+  args: {
+    embeddingIds: v.array(v.id("noteEmbeddings")),
+  },
+  handler: async (ctx, args) => {
+    const embeddings = [];
+    for (const id of args.embeddingIds) {
+      const embedding = await ctx.db.get(id);
+      if (embedding !== null) {
+        embeddings.push(embedding);
+      }
+    }
+
+    const uniqueNoteIds = [
+      ...new Set(embeddings.map((embedding) => embedding.noteId)),
+    ];
+
+    const results = [];
+    for (const id of uniqueNoteIds) {
+      const note = await ctx.db.get(id);
+      if (note !== null) {
+        results.push(note);
+      }
+    }
+
+    return results;
   },
 });
