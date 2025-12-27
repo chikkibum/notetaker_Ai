@@ -3,11 +3,12 @@
 import Markdown from "@/components/markDown";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useChat } from '@ai-sdk/react'
 import { useAuthToken } from "@convex-dev/auth/react";
 import { DefaultChatTransport, UIMessage } from "ai";
-import { Bot, Expand, Minimize, Send, Trash, X } from "lucide-react";
+import { Bot, Expand, Minimize, Send, Trash, X, FileText, Search, Clock } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace(
@@ -62,8 +63,9 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
       },
     }),
     messages: initialMessages,
-    maxSteps: 3,
   });
+
+  console.log(messages)
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -174,8 +176,6 @@ interface ChatMessageProps {
 }
 
 function ChatMessage({ message }: ChatMessageProps) {
-  const currentStep = message.parts[message.parts.length - 1];
-
   return (
     <div
       className={cn(
@@ -183,28 +183,150 @@ function ChatMessage({ message }: ChatMessageProps) {
         message.role === "user" ? "ml-auto items-end" : "mr-auto items-start"
       )}
     >
-      <div
-        className={cn(
-          "prose dark:prose-invert rounded-lg px-3 py-2 text-sm",
-          message.role === "user"
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted first:prose-p:mt-0"
-        )}
-      >
-        {message.role === "assistant" && (
-          <div className="text-muted-foreground mb-1 flex items-center gap-1 text-xs font-medium">
-            <Bot className="text-primary size-3" />
-            AI Assistant
-          </div>
-        )}
-        {currentStep?.type === "text" && (
-          <Markdown>{currentStep.text}</Markdown>
-        )}
-        {currentStep.type === "tool-invocation" && (
-          <div className="italic animate-pulse">Searching notes...</div>
+      {message.parts.map((part, index) => (
+        <MessagePart
+          key={index}
+          part={part}
+          role={message.role}
+          isLast={index === message.parts.length - 1}
+        />
+      ))}
+    </div>
+  );
+}
+
+interface MessagePartProps {
+  part: UIMessage["parts"][number];
+  role: UIMessage["role"];
+  isLast: boolean;
+}
+
+function MessagePart({ part, role, isLast }: MessagePartProps) {
+  return (
+    <div
+      className={cn(
+        "prose dark:prose-invert rounded-lg px-3 py-2 text-sm mb-2",
+        role === "user"
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted first:prose-p:mt-0"
+      )}
+    >
+      {role === "assistant" && isLast && (
+        <div className="text-muted-foreground mb-1 flex items-center gap-1 text-xs font-medium">
+          <Bot className="text-primary size-3" />
+          AI Assistant
+        </div>
+      )}
+      {part.type === "text" && "text" in part && <Markdown>{part.text}</Markdown>}
+      {part.type === "tool-findRelevantNotes" && (
+        <ToolCallResult toolCall={part as Extract<UIMessage["parts"][number], { type: "tool-findRelevantNotes" }>} />
+      )}
+    </div>
+  );
+}
+
+interface ToolCallResultProps {
+  toolCall: Extract<UIMessage["parts"][number], { type: "tool-findRelevantNotes" }>;
+}
+
+function ToolCallResult({ toolCall }: ToolCallResultProps) {
+  // Type assertion to access tool call properties
+  const toolCallData = toolCall as any;
+  
+  if (toolCallData.state !== "output-available") {
+    return (
+      <div className="flex items-center gap-2 text-muted-foreground py-2">
+        <Search className="size-4 animate-pulse" />
+        <span className="italic">Searching notes...</span>
+      </div>
+    );
+  }
+
+  const notes: Array<{ id: string; title: string; body: string; creationTime: number }> = toolCallData.output || [];
+  const query: string = toolCallData.input?.query || "";
+
+  if (notes.length === 0) {
+    return (
+      <div className="flex flex-col gap-2 py-2">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Search className="size-4" />
+          <span className="text-sm font-medium">No notes found</span>
+        </div>
+        {query && (
+          <p className="text-xs text-muted-foreground">
+            No notes match "{query}"
+          </p>
         )}
       </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 py-2">
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Search className="size-4" />
+        <span className="text-sm font-medium">
+          Found {notes.length} {notes.length === 1 ? "note" : "notes"}
+          {query && ` for "${query}"`}
+        </span>
+      </div>
+      <div className="flex flex-col gap-2">
+        {notes.map((note: { id: string; title: string; body: string; creationTime: number }) => (
+          <NoteCard key={note.id} note={note} />
+        ))}
+      </div>
     </div>
+  );
+}
+
+interface NoteCardProps {
+  note: {
+    id: string;
+    title: string;
+    body: string;
+    creationTime: number;
+  };
+}
+
+function NoteCard({ note }: NoteCardProps) {
+  const date = new Date(note.creationTime);
+  const formattedDate = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const truncatedBody =
+    note.body.length > 150 ? `${note.body.substring(0, 150)}...` : note.body;
+
+  return (
+    <Card className="border-border/50 hover:border-border transition-colors cursor-pointer">
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="text-sm font-semibold line-clamp-2">
+            {note.title || "Untitled Note"}
+          </CardTitle>
+          <a
+            href={`/notes?noteId=${note.id}`}
+            className="text-primary hover:text-primary/80 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <FileText className="size-4 flex-shrink-0 mt-0.5" />
+          </a>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <CardDescription className="text-xs line-clamp-3 mb-2">
+          {truncatedBody}
+        </CardDescription>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <Clock className="size-3" />
+          <span>{formattedDate}</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
