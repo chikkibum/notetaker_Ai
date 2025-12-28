@@ -17,7 +17,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
@@ -35,7 +35,7 @@ type NoteFormData = {
 };
 
 const CreateNote = () => {
-  const create = useMutation(api.notes.create);
+  const createNote = useAction(api.notesAction.createNote);
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [noteType, setNoteType] = useState<"quicknote" | "richnote">("quicknote");
@@ -44,7 +44,7 @@ const CreateNote = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    watch,
+
   } = useForm<NoteFormData>({
     defaultValues: {
       title: "",
@@ -64,12 +64,10 @@ const CreateNote = () => {
       }
 
       // For quicknotes, create with plain text content
-      await create({
+      await createNote({
         title: data.title,
-        content: data.content,
-        noteType: "quicknote",
-        folderId: data.folderId as any,
-        tags: data.tags,
+        noteType: noteType,
+        body: data.content,
       });
       reset();
       setNoteType("quicknote");
