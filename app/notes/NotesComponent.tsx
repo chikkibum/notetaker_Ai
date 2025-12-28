@@ -11,14 +11,16 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import ReadNote from "@/components/notes-dialog";
 import { FileText, StickyNote } from "lucide-react";
 import { Typography } from "@/components/ui/typography";
 
 const NotesComponent = () => {
   const notes = useQuery(api.notes.getNotes);
-  const [viewNotes, setViewNotes] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const noteId = searchParams.get("noteId");
 
   const isLoading = notes === undefined;
 
@@ -133,8 +135,19 @@ const NotesComponent = () => {
 
                 <CardFooter>
                   <ReadNote
-                    isOpen={viewNotes === data._id}
-                    setIsOpen={(open) => setViewNotes(open ? data._id : null)}
+                    isOpen={noteId === data._id}
+                    setIsOpen={(open) => {
+                      if (open) {
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.set("noteId", data._id);
+                        router.push(`?${params.toString()}`);
+                      } else {
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.delete("noteId");
+                        const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+                        router.push(newUrl);
+                      }
+                    }}
                     data={data}
                   />
                 </CardFooter>
