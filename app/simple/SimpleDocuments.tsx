@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import {
@@ -38,7 +38,7 @@ export function SimpleDocuments() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<Id<"notes"> | null>(null);
   const richNotes = useQuery(api.notes.getRichNotes);
-  const createNote = useMutation(api.notes.create);
+  const createNote = useAction(api.notesAction.createNote);
   const updateNote = useMutation(api.notes.update);
   const deleteNote = useMutation(api.notes.softDelete);
 
@@ -61,9 +61,7 @@ export function SimpleDocuments() {
       if (viewMode === "create") {
         await createNote({
           title: title || "Untitled Document",
-          content: data.json,
-          noteType: "richnote",
-          folderId: null,
+          body: data.text,
         });
       } else if (viewMode === "edit" && editingNoteId) {
         await updateNote({
