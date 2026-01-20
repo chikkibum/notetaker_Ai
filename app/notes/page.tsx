@@ -3,8 +3,6 @@ import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper";
 import NotesComponent from "./NotesComponent";
 import CreateNote from "./CreateNote";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AIChatButton } from "@/components/ai-chat-button";
 

@@ -25,7 +25,7 @@ const NotesComponent = () => {
   const isLoading = notes === undefined;
 
   // Helper to get note type (default to richnote for backward compatibility)
-  const getNoteType = (note: any): "quicknote" | "richnote" => {
+  const getNoteType = (note: { noteType?: "quicknote" | "richnote" }): "quicknote" | "richnote" => {
     return note.noteType || "richnote";
   };  
 

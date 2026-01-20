@@ -151,7 +151,7 @@ const CreateNote = () => {
                       Rich notes use the TipTap editor for advanced formatting.
                     </p>
                     <p>
-                      Click "Create Rich Note" to open the editor where you can create
+                      Click &quot;Create Rich Note&quot; to open the editor where you can create
                       formatted documents with headings, lists, images, and more.
                     </p>
                   </div>

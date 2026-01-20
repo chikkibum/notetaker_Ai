@@ -38,7 +38,7 @@ export default function EditNotePage() {
     }
   }, [note]);
 
-  const handleSave = async (data: { html: string; json: any; text: string }) => {
+  const handleSave = async (data: { html: string; json: unknown; text: string }) => {
     if (!noteId) return;
     
     setIsSaving(true);
