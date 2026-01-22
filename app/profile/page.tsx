@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper";
 import UserDetails from "./UserDetails";
 

@@ -4,9 +4,8 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Calendar, Shield } from "lucide-react";
+import { Mail, User, Calendar } from "lucide-react";
 
 const UserDetails = () => {
   const user = useQuery(api.users.getUserDetails);
@@ -55,7 +54,7 @@ const UserDetails = () => {
           <div className="flex items-center space-x-4">
             <Avatar className="h-16 w-16">
               <AvatarImage src={user?.image} alt={user.name || "User"} />
-              <AvatarFallback>{getInitials(user?.name! || user?.email!)}</AvatarFallback>
+              <AvatarFallback>{getInitials((user?.name ?? user?.email) ?? "User")}</AvatarFallback>
             </Avatar>
             <div>
               <h3 className="text-xl font-semibold">{user.name || "User"}</h3>
