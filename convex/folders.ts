@@ -98,7 +98,7 @@ export const update = mutation({
       }
     }
 
-    const updates: any = {
+    const updates: Record<string, unknown> = {
       updatedAt: Date.now(),
     };
 

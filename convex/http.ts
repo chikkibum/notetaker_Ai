@@ -1,6 +1,5 @@
 import { httpRouter } from "convex/server";
 import { auth } from "./auth";
-import path from "path";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { convertToModelMessages, stepCountIs, streamText, tool, UIMessage } from "ai";
 import { httpAction } from "./_generated/server";
@@ -46,7 +45,7 @@ http.route({
             parameters: z.object({
               query: z.string().describe("The user's query"),
             }),
-            execute: async ({ query }: { query: string }): Promise<Array<{ id: any; title: string; body: any; creationTime: number }>> => {
+            execute: async ({ query }: { query: string }): Promise<Array<{ id: string; title: string; body: unknown; creationTime: number }>> => {
               console.log("findRelevantNotes query:", query);
   
               const relevantNotes = await ctx.runAction(
@@ -64,8 +63,7 @@ http.route({
                 creationTime: note._creationTime,
               }));
             },
-          } as any),
-          
+          }),
         },
         stopWhen: stepCountIs(5),
         onError(error) {

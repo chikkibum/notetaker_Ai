@@ -1,6 +1,6 @@
 import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { Doc, getAuthUserId } from "@convex-dev/auth/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 // Create a new note
 export const create = mutation({
@@ -60,7 +60,7 @@ export const update = mutation({
       throw new Error("Not authorized to update this note");
     }
 
-    const updates: any = {
+    const updates: Record<string, unknown> = {
       updatedAt: Date.now(),
     };
 

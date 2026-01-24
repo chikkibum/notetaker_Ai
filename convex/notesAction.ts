@@ -24,7 +24,7 @@ export const createNote = action({
     const embeddings = await generateEmbeddings(text);
 
     const noteId: Id<"notes"> = await ctx.runMutation(
-      (internal as any).notes.createNoteWithEmbeddings,
+      internal.notes.createNoteWithEmbeddings,
       {
         title: args.title,
         body: args.body,
@@ -47,7 +47,8 @@ export const findRelevantNotes = internalAction({
 
     const results = await ctx.vectorSearch("noteEmbeddings", "by_embedding", {
       vector: embedding,
-      limit: 16,
+      limit: 1,
+
       filter: (q) => q.eq("userId", args.userId),
     });
 
@@ -59,7 +60,7 @@ export const findRelevantNotes = internalAction({
 
     const embeddingIds = resultsAboveThreshold.map((result) => result._id);
 
-    const notes = await ctx.runQuery((internal as any).notes.fetchNotesByEmbeddingIds, {
+    const notes = await ctx.runQuery(internal.notes.fetchNotesByEmbeddingIds, {
       embeddingIds,
     });
 
