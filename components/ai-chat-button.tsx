@@ -231,7 +231,7 @@ interface ToolCallResultProps {
 
 function ToolCallResult({ toolCall }: ToolCallResultProps) {
   // Type assertion to access tool call properties
-  const toolCallData = toolCall as any;
+  const toolCallData = toolCall as { state?: string; output?: Array<{ id: string; title: string; body: string; creationTime: number }>; input?: { query?: string } };
   
   if (toolCallData.state !== "output-available") {
     return (
@@ -254,7 +254,7 @@ function ToolCallResult({ toolCall }: ToolCallResultProps) {
         </div>
         {query && (
           <p className="text-xs text-muted-foreground">
-            No notes match "{query}"
+            No notes match &quot;{query}&quot;
           </p>
         )}
       </div>

@@ -102,22 +102,13 @@ export function useLinkHandler(props: LinkHandlerProps) {
   useEffect(() => {
     if (!editor) return
 
-    // Get URL immediately on mount
-    const { href } = editor.getAttributes("link")
-
-    if (isLinkActive(editor) && url === null) {
-      setUrl(href || "")
-    }
-  }, [editor, url])
-
-  useEffect(() => {
-    if (!editor) return
-
     const updateLinkState = () => {
       const { href } = editor.getAttributes("link")
       setUrl(href || "")
     }
 
+    // Initial sync - use queueMicrotask to avoid synchronous setState in effect
+    queueMicrotask(updateLinkState)
     editor.on("selectionUpdate", updateLinkState)
     return () => {
       editor.off("selectionUpdate", updateLinkState)

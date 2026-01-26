@@ -7,7 +7,7 @@ import Earth from "@/components/ui/globe"
 import ScrambleHover from "@/components/ui/scramble"
 import { FollowerPointerCard } from "@/components/ui/following-pointer"
 import { motion, useInView } from "framer-motion"
-import { Suspense, useEffect, useRef, useState } from "react"
+import { Suspense, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/site-config"
 import { MaxWidthWrapper } from "@/components/ui/max-width-wrapper"
@@ -19,20 +19,13 @@ export default function Features() {
   const { theme } = useTheme()
   const [isHovering, setIsHovering] = useState(false)
   const [isCliHovering, setIsCliHovering] = useState(false)
-  const [isFeature3Hovering, setIsFeature3Hovering] = useState(false)
-  const [isFeature4Hovering, setIsFeature4Hovering] = useState(false)
+  const [, setIsFeature3Hovering] = useState(false)
+  const [, setIsFeature4Hovering] = useState(false)
   const [inputValue, setInputValue] = useState("")
 
-  const [baseColor, setBaseColor] = useState<[number, number, number]>([0.906, 0.541, 0.325]) // #e78a53 in RGB normalized
-  const [glowColor, setGlowColor] = useState<[number, number, number]>([0.906, 0.541, 0.325]) // #e78a53 in RGB normalized
-
-  const [dark, setDark] = useState<number>(theme === "dark" ? 1 : 0)
-
-  useEffect(() => {
-    setBaseColor([0.906, 0.541, 0.325]) // #e78a53
-    setGlowColor([0.906, 0.541, 0.325]) // #e78a53
-    setDark(theme === "dark" ? 1 : 0)
-  }, [theme])
+  const baseColor: [number, number, number] = [0.906, 0.541, 0.325] // #e78a53 in RGB normalized
+  const glowColor: [number, number, number] = [0.906, 0.541, 0.325] // #e78a53 in RGB normalized
+  const dark = theme === "dark" ? 1 : 0
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {

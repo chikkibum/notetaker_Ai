@@ -1,18 +1,18 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useSyncExternalStore } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles } from "lucide-react"
 import { siteConfig } from "@/lib/site-config"
 
-export default function Hero() {
-  const [mounted, setMounted] = useState(false)
-  const { hero } = siteConfig
+const emptySubscribe = () => () => {};
+const getServerSnapshot = () => false;
+const getClientSnapshot = () => true;
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+export default function Hero() {
+  const mounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot)
+  const { hero } = siteConfig
 
   if (!mounted) {
     return null

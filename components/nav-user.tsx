@@ -1,5 +1,5 @@
 "use client";
-import { CreditCard, MoreVertical, LogOut, Bell, User } from "lucide-react";
+import { CreditCard, LogOut, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -22,7 +22,7 @@ import Link from "next/link";
 export function NavUser() {
   const { signOut } = useAuthActions();
   const user = useQuery(api.users.getUserDetails)
-  const { isAuthenticated } = useConvexAuth();
+  useConvexAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

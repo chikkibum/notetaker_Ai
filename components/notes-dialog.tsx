@@ -10,14 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
 import { FunctionReturnType } from "convex/server";
 import { api } from "@/convex/_generated/api";
 import { TipTapRenderer } from "@/components/tiptap-renderer";
 import { useRouter } from "next/navigation";
 import { ExternalLink } from "lucide-react";
-import { Id } from "@/convex/_generated/dataModel";
-
 // Get the return type of a specific query
 type NoteData = FunctionReturnType<typeof api.notes.getNoteByID>;
 

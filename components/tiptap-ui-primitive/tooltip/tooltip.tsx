@@ -167,8 +167,7 @@ export const TooltipTrigger = forwardRef<HTMLElement, TooltipTriggerProps>(
       ? parseInt(version, 10) >= 19
         ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (children as { props: { ref?: React.Ref<any> } }).props.ref
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (children as any).ref
+        : (children as React.ReactElement & { ref?: React.Ref<unknown> }).ref
       : undefined
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef])
 
@@ -179,6 +178,7 @@ export const TooltipTrigger = forwardRef<HTMLElement, TooltipTriggerProps>(
 
       return cloneElement(
         children,
+        // eslint-disable-next-line react-hooks/refs -- floating-ui requires passing ref to getReferenceProps
         context.getReferenceProps({
           ref,
           ...props,

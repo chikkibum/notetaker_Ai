@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Editor, EditorContent, EditorContext, HTMLContent, JSONContent, useEditor } from "@tiptap/react";
 
 // --- Tiptap Core Extensions ---
@@ -76,8 +76,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Save } from "lucide-react";
 
 interface SimpleEditorProps {
-  initialContent?: any; // TipTap JSON content
-  onSave?: (data: { html: string; json: any; text: string }) => void;
+  initialContent?: JSONContent;
+  onSave?: (data: { html: string; json: JSONContent; text: string }) => void;
   title?: string;
   onTitleChange?: (title: string) => void;
 }
@@ -226,7 +226,7 @@ export function SimpleEditor({
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
     "main"
   );
-  const [editorData, setEditorData] = useState<{
+  const [, setEditorData] = useState<{
     html: string;
     json: Record<string, unknown>;
     text: string;
@@ -235,7 +235,6 @@ export function SimpleEditor({
     json: {},
     text: "",
   });
-  const toolbarRef = useRef<HTMLDivElement>(null);
   const [localTitle, setLocalTitle] = useState(title || "");
 
   const editor = useEditor({
@@ -306,9 +305,13 @@ export function SimpleEditor({
     // },
   });
 
+  const [toolbarHeight, setToolbarHeight] = useState(0);
+  const toolbarRefCallback = useCallback((el: HTMLDivElement | null) => {
+    if (el) setToolbarHeight(el.getBoundingClientRect().height);
+  }, []);
   const rect = useCursorVisibility({
     editor,
-    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
+    overlayHeight: toolbarHeight,
   });
 
   // Update editor content when initialContent changes
@@ -318,9 +321,10 @@ export function SimpleEditor({
     }
   }, [editor, initialContent]);
 
-  // Update local title when prop changes
+  // Update local title when prop changes (sync from parent - valid pattern)
   useEffect(() => {
     if (title !== undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing state from prop when note changes
       setLocalTitle(title);
     }
   }, [title]);
@@ -334,6 +338,7 @@ export function SimpleEditor({
 
   useEffect(() => {
     if (!isMobile && mobileView !== "main") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset mobile view when switching to desktop
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
@@ -353,7 +358,7 @@ export function SimpleEditor({
       )}
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
-          ref={toolbarRef}
+          ref={toolbarRefCallback}
           style={{
             ...(isMobile
               ? {
