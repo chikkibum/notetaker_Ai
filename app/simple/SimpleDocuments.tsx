@@ -56,7 +56,7 @@ export function SimpleDocuments() {
     setViewMode("edit");
   };
 
-  const handleSave = async (data: { html: string; json: any; text: string }) => {
+  const handleSave = async (data: { html: string; json: unknown; text: string }) => {
     try {
       if (viewMode === "create") {
         await createNote({

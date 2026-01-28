@@ -115,7 +115,7 @@ const ScrambleHover: React.FC<ScrambleHoverProps> = ({
         if (sequential) {
           if (revealedIndices.size < text.length) {
             const nextIndex = getNextIndex()
-            revealedIndices.add(nextIndex)
+            setRevealedIndices((prev) => new Set(prev).add(nextIndex))
             setDisplayText(shuffleText(text))
           } else {
             clearInterval(interval)
@@ -133,13 +133,13 @@ const ScrambleHover: React.FC<ScrambleHoverProps> = ({
       }, scrambleSpeed)
     } else {
       setDisplayText(text)
-      revealedIndices.clear()
+      setRevealedIndices(new Set())
     }
 
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isHovering, text, characters, scrambleSpeed, useOriginalCharsOnly, sequential, revealDirection, maxIterations])
+  }, [isHovering, text, characters, scrambleSpeed, useOriginalCharsOnly, sequential, revealDirection, maxIterations, revealedIndices])
 
   return (
     <motion.span
