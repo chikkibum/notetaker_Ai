@@ -105,14 +105,14 @@ export function useElementRect({
 
   useEffect(() => {
     if (!enabled || !isClientSide()) {
-      setRect(initialRect)
+      queueMicrotask(() => setRect(initialRect))
       return
     }
 
     const targetElement = getTargetElement()
     if (!targetElement) return
 
-    updateRect()
+    queueMicrotask(() => updateRect())
 
     const cleanup: (() => void)[] = []
 
