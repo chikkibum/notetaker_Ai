@@ -53,7 +53,7 @@ export function LoginForm({
   // Redirect authenticated users away from login page
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push("/notes");
+      router.push("/");
     }
   }, [isAuthenticated, isLoading, router]);
 

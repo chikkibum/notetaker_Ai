@@ -65,7 +65,7 @@ export function SignupForm({
   // Redirect authenticated users away from signup page
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push("/notes");
+      router.push("/");
     }
   }, [isAuthenticated, isLoading, router]);
 
