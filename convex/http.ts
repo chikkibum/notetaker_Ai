@@ -42,7 +42,7 @@ http.route({
           findRelevantNotes: tool({
             description:
               "Retrieve relevant notes from the database based on the user's query, you need to extract the query from user and then use the tool to fetch relevant notes",
-            parameters: z.object({
+            inputSchema: z.object({
               query: z.string().describe("The user's query"),
             }),
             execute: async ({ query }: { query: string }): Promise<Array<{ id: string; title: string; body: unknown; creationTime: number }>> => {
@@ -50,7 +50,7 @@ http.route({
   
               const relevantNotes = await ctx.runAction(
                 internal.notesAction.findRelevantNotes,
-                {
+                { 
                   query,
                   userId,
                 }
