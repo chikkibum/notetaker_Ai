@@ -132,8 +132,8 @@ const ScrambleHover: React.FC<ScrambleHoverProps> = ({
         }
       }, scrambleSpeed)
     } else {
-      setDisplayText(text)
-      setRevealedIndices(new Set())
+      // setDisplayText(text)
+      // setRevealedIndices(new Set())
     }
 
     return () => {

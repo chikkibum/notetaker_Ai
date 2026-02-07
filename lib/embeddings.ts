@@ -1,8 +1,8 @@
 import { google } from "@ai-sdk/google";
+import { EmbeddingModel } from "ai";
 import { embed, embedMany } from "ai";
 
-const embeddingModel = google.embedding("text-embedding-004");
-
+const embeddingModel = google.embedding("gemini-embedding-001");
 
 function generateChunks(input: string) {
   return input
