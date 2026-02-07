@@ -58,15 +58,15 @@ export function LoginForm({
   }, [isAuthenticated, isLoading, router]);
 
   const onSubmit = async (data: LoginFormData) => {
-      try {
-        await signIn("password", data);
-        toast.success("Login successful");
-        // Redirect is handled by useEffect hook watching isAuthenticated
-        // and by the middleware in proxy.ts
-      } catch (error) {
-        console.error("Login error:", error);
-        toast.error("Login failed. Please check your credentials.");
-      }
+    try {
+      await signIn("password", data);
+      toast.success("Login successful");
+      // Redirect is handled by useEffect hook watching isAuthenticated
+      // and by the middleware in proxy.ts
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -134,7 +134,7 @@ export function LoginForm({
                 Or continue with
               </FieldSeparator>
               <Field className="flex justify-center">
-                <Button 
+                <Button
                   onClick={async () => {
                     try {
                       await signIn("google");
@@ -142,8 +142,8 @@ export function LoginForm({
                       console.error("Google sign-in error:", error);
                       toast.error("Failed to sign in with Google");
                     }
-                  }} 
-                  variant="outline" 
+                  }}
+                  variant="outline"
                   type="button"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
